@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Mejora imágenes nocturnas con zoom digital, reducción de ruido y realce de luminancia."
+    >
+    <title>AeroZoom | Visión nocturna</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="AeroZoom, inicio">
+          <span class="brand-mark" aria-hidden="true">A</span>
+          <span>AERO<span class="brand-light">ZOOM</span></span>
+        </a>
+        <div class="service-status" id="service-status" role="status">
+          <span class="status-dot"></span>
+          <span id="service-status-text">Conectando con el servicio</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="intro">
+          <p class="eyebrow"><span></span> IMAGEN COMPUTACIONAL · EN TIEMPO REAL</p>
+          <h1>La noche, <span>con más detalle.</span></h1>
+          <p class="intro-copy">
+            Amplía zonas específicas y revela información en capturas oscuras.
+            Tu imagen se procesa localmente en este servicio.
+          </p>
+        </section>
+
+        <section class="workspace" aria-label="Estudio de mejora de imagen">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">ESTUDIO DE IMAGEN</p>
+              <h2>Procesamiento nocturno</h2>
+            </div>
+            <div class="actions">
+              <button class="button button-live" id="live-button" type="button" aria-pressed="false" disabled>
+                <span class="live-indicator" aria-hidden="true"></span>
+                <span id="live-state-text">Iniciar vista simulada</span>
+              </button>
+              <button class="button button-subtle" id="demo-button" type="button">
+                <span aria-hidden="true">✦</span> Probar imagen de ejemplo
+              </button>
+              <label class="button button-upload" for="file-input">
+                <span aria-hidden="true">↑</span> Subir imagen
+              </label>
+              <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp">
+            </div>
+          </div>
+
+          <div class="workspace-grid">
+            <section class="preview-card" aria-labelledby="original-title">
+              <div class="preview-heading">
+                <div>
+                  <span class="step-number">01</span>
+                  <h3 id="original-title">Imagen original</h3>
+                </div>
+                <span class="image-tag" id="source-dimensions">—</span>
+              </div>
+              <div class="image-frame" id="source-frame">
+                <img id="source-image" alt="Imagen original pendiente de cargar" hidden>
+                <span class="focus-marker" id="focus-marker" aria-hidden="true" hidden></span>
+                <div class="empty-state" id="source-empty">
+                  <span class="empty-icon" aria-hidden="true">＋</span>
+                  <strong>Selecciona una imagen</strong>
+                  <span id="upload-help">PNG, JPG o WebP · máximo 10 MB</span>
+                </div>
+                <button class="image-hit-area" id="focus-picker" type="button" aria-label="Elegir el centro del zoom haciendo clic en la imagen" hidden></button>
+              </div>
+              <p class="preview-hint" id="live-frame-state">Cuadro detenido. Fuente: simulación local.</p>
+            </section>
+
+            <section class="preview-card result-card" aria-labelledby="result-title">
+              <div class="preview-heading">
+                <div>
+                  <span class="step-number">02</span>
+                  <h3 id="result-title">Imagen mejorada</h3>
+                </div>
+                <span class="image-tag result-tag" id="result-status">SIN PROCESAR</span>
+              </div>
+              <div class="image-frame result-frame">
+                <img id="result-image" alt="Resultado procesado" hidden>
+                <div class="empty-state" id="result-empty">
+                  <span class="result-glyph" aria-hidden="true">◉</span>
+                  <strong>El resultado aparecerá aquí</strong>
+                  <span>Elige los ajustes y aplica la mejora</span>
+                </div>
+                <div class="processing-overlay" id="processing-overlay" hidden>
+                  <span class="spinner" aria-hidden="true"></span>
+                  <span>Mejorando imagen…</span>
+                </div>
+              </div>
+              <p class="preview-hint" id="result-dimensions">Mantiene las dimensiones originales.</p>
+            </section>
+          </div>
+
+          <section class="insight-grid" aria-label="Asistentes locales y trigonometría">
+            <section class="insight-card" aria-labelledby="assistants-title">
+              <div class="insight-heading">
+                <div>
+                  <p class="eyebrow">ANÁLISIS LOCAL · SIN CLAVES EXTERNAS</p>
+                  <h3 id="assistants-title">Dos asistentes especializados</h3>
+                </div>
+                <span class="image-tag" id="analysis-status">ESPERANDO CUADRO</span>
+              </div>
+              <p class="metrics-line" id="image-metrics">Las métricas de imagen aparecerán al cargar un cuadro.</p>
+              <div class="assistant-list" id="assistant-reports" aria-live="polite">
+                <article class="assistant-report">
+                  <strong>Aero · exposición</strong>
+                  <p>Analiza brillo y recomienda un ajuste de exposición.</p>
+                </article>
+                <article class="assistant-report">
+                  <strong>Lumen · calidad</strong>
+                  <p>Revisa nitidez, contraste y advertencias de medición.</p>
+                </article>
+              </div>
+              <p class="privacy-note">Son asistentes locales explicables; no son modelos generativos ni detectan objetos.</p>
+            </section>
+
+            <section class="insight-card distance-card" aria-labelledby="distance-title">
+              <div class="insight-heading">
+                <div>
+                  <p class="eyebrow">GEOMETRÍA DE CÁMARA</p>
+                  <h3 id="distance-title">Distancia trigonométrica</h3>
+                </div>
+                <span class="image-tag">SUELO PLANO</span>
+              </div>
+              <p class="metrics-line">Selecciona un punto en la imagen. Indica la altura, inclinación hacia abajo y campo visual vertical de la cámara.</p>
+              <div class="geometry-inputs">
+                <label>Altura (m)<input id="camera-height" type="number" min="0.1" max="5000" step="0.1" value="20"></label>
+                <label>Inclinación ↓ (°)<input id="camera-tilt" type="number" min="1" max="89" step="0.5" value="45"></label>
+                <label>FOV vertical (°)<input id="camera-fov" type="number" min="1" max="120" step="0.5" value="50"></label>
+              </div>
+              <button class="button button-measure" id="measure-button" type="button" disabled>Calcular punto seleccionado</button>
+              <div class="measurement-result" id="measurement-result" aria-live="polite">
+                <span class="measurement-empty">Selecciona un punto para ver su estimación.</span>
+              </div>
+              <p class="privacy-note">Estimación relativa a la cámara; requiere cámara calibrada y terreno aproximadamente plano. La simulación no proporciona distancias reales.</p>
+            </section>
+          </section>
+
+          <section class="code-assistant-panel" aria-labelledby="code-assistant-title">
+            <div class="insight-heading">
+              <div>
+                <p class="eyebrow">ASISTENCIA DE DESARROLLO · ANÁLISIS ESTÁTICO</p>
+                <h3 id="code-assistant-title">Revisión de código en tiempo real</h3>
+              </div>
+              <span class="image-tag" id="code-analysis-status">ESPERANDO CÓDIGO</span>
+            </div>
+            <label class="code-editor-label" for="code-input">Pega código Python para recibir sugerencias de estructura y fiabilidad. No se ejecuta ni se modifica.</label>
+            <textarea id="code-input" rows="8" spellcheck="false" placeholder="def mejorar_imagen(imagen):&#10;    ..."></textarea>
+            <div class="code-analysis-meta">
+              <span id="code-analysis-metrics">Escribe o pega código para comenzar.</span>
+              <span id="code-character-count">0 caracteres</span>
+            </div>
+            <div class="assistant-list code-assistant-list" id="code-assistant-reports" aria-live="polite">
+              <article class="assistant-report">
+                <strong>Aero · estructura</strong>
+                <p>Revisa organización y complejidad del código.</p>
+              </article>
+              <article class="assistant-report">
+                <strong>Lumen · fiabilidad</strong>
+                <p>Busca errores de sintaxis y patrones para validar con pruebas.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="controls" aria-labelledby="controls-title">
+            <div class="controls-heading">
+              <div>
+                <p class="eyebrow">AJUSTES</p>
+                <h3 id="controls-title">Control de imagen</h3>
+              </div>
+              <button class="button button-primary" id="process-button" type="button" disabled>
+                Aplicar mejora <span aria-hidden="true">→</span>
+              </button>
+            </div>
+
+            <div class="control-grid">
+              <label class="range-control" for="zoom-input">
+                <span class="control-label">Zoom digital <output id="zoom-value">3.0×</output></span>
+                <input id="zoom-input" type="range" min="1" max="8" step="0.5" value="3">
+                <span class="range-ends"><span>1×</span><span>8×</span></span>
+              </label>
+              <label class="range-control" for="gamma-input">
+                <span class="control-label">Realce de luz <output id="gamma-value">2.0</output></span>
+                <input id="gamma-input" type="range" min="0.5" max="4" step="0.1" value="2">
+                <span class="range-ends"><span>Suave</span><span>Intenso</span></span>
+              </label>
+              <fieldset class="center-control">
+                <legend>Centro del zoom <span id="center-hint">en píxeles</span></legend>
+                <label>X <input id="x-input" type="number" min="0" value="400" inputmode="numeric"></label>
+                <label>Y <input id="y-input" type="number" min="0" value="300" inputmode="numeric"></label>
+              </fieldset>
+            </div>
+            <p class="error-message" id="error-message" role="alert" hidden></p>
+            <div class="result-actions">
+              <span>Reducción de ruido cromático · CLAHE · enfoque</span>
+              <a class="download-link" id="download-link" href="#" download="aerozoom-mejorada.png" hidden>
+                Descargar PNG <span aria-hidden="true">↓</span>
+              </a>
+            </div>
+          </section>
+        </section>
+        <footer>Procesamiento de imagen para visión nocturna <span>·</span> AeroZoom</footer>
+      </main>
+    </div>
+  </body>
+</html>
